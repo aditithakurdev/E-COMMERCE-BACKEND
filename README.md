@@ -27,32 +27,36 @@ The backend is integrated with a relational database (PostgreSQL), making it a s
     -Secure API Endpoints
 
 *TECH STACK*:
-    -Node.js
-    -Express.js
+    -NestJS
     -Database: PostgreSQL
     -Authentication: JWT
     -Password Encryption: bcrypt        
 
 *PROJECT STRUCTURE*:
-    ecommerce-backend/
-│── src/
-│   ├── config/
-│   │   └── database.js
-│   ├── models/
-│   │   ├── user.js
-│   │   ├── product.js
-│   │   └── order.js
-│   ├── routes/
-│   │   ├── auth.routes.js
-│   │   ├── product.routes.js
-│   │   └── order.routes.js
-│   ├── controllers/
-│   │   ├── auth.controller.js
-│   │   ├── product.controller.js
-│   │   └── order.controller.js
-│   ├── middleware/
-│   │   └── auth.middleware.js
-│   ├── app.js
-│── index.js
+src/
+│── auth/
+│   ├── auth.module.ts
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   ├── jwt.strategy.ts
+│   ├── guards/
+│   │   └── jwt-auth.guard.ts
+│   └── dto/
+│       ├── register.dto.ts
+│       └── login.dto.ts
+│
+│── users/
+│   ├── user.entity.ts
+│   ├── users.service.ts
+│   └── users.module.ts
+│── products/
+│   ├── product.entity.ts
+│   ├── products.controller.ts
+│   └── products.module.ts
+│── orders/
+│   ├── order.entity.ts
+│   ├── orders.controller.ts
+│   └── orders.module.ts
+│── app.module.ts
 │── package.json
 │── .env
