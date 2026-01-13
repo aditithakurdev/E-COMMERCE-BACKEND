@@ -8,6 +8,7 @@ import { ResponseMessage } from 'src/common/responseMessage';
 import { CreateOrderDto } from './dto/order.dto';
 import { StatusCode } from 'src/common/enums/status-code.enum';
 import { ErrorMessage } from 'src/common/error-message.enum';
+import { OrderStatus } from 'src/common/enums/order-status.enum';
 
 @Injectable()
 export class OrdersService {
@@ -80,4 +81,21 @@ export class OrdersService {
       data: order,
     };
   }
+
+  async updateOrderStatus(orderId: string, status: OrderStatus, isAdmin: boolean) {
+  if (!isAdmin) throw new ForbiddenException(ErrorMessage.ORDER_UNAUTHORIZED);
+
+  const order = await this.orderRepo.findOne({ where: { id: orderId } });
+  if (!order) throw new NotFoundException(ErrorMessage.ORDER_NOT_FOUND);
+
+  order.status = status;
+  await this.orderRepo.save(order);
+
+  return {
+    statusCode: StatusCode.OK,
+    message: `Order status updated to ${status}`,
+    data: order,
+  };
+}
+
 }

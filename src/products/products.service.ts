@@ -70,16 +70,18 @@ export class ProductsService {
 
   // Delete Product (Admin only)
   async deleteProduct(id: string, isAdmin: boolean) {
-    if (!isAdmin) throw new ForbiddenException(ResponseMessage.AUTH.UNAUTHORIZED);
+  if (!isAdmin) throw new ForbiddenException(ErrorMessage.PRODUCT_UNAUTHORIZED);
 
-    const product = await this.productRepo.findOne({ where: { id } });
-    if (!product) throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
+  const product = await this.productRepo.findOne({ where: { id } });
+  if (!product) throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
 
-    await this.productRepo.remove(product);
+  product.isActive = false; // soft delete
+  await this.productRepo.save(product);
 
-    return {
-      statusCode: StatusCode.OK,
-      message: ResponseMessage.PRODUCT.DELETE_SUCCESS,
-    };
-  }
+  return {
+    statusCode: StatusCode.OK,
+    message: ResponseMessage.PRODUCT.DELETE_SUCCESS,
+  };
+}
+
 }
