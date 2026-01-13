@@ -1,17 +1,33 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
-import { OrdersService } from './orders.service';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
+import { OrderItem } from './order-item.entity';
 
-@Controller('orders')
-export class OrdersController {
-  constructor(private service: OrdersService) {}
+@Entity('orders')
+export class Order {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Post()
-  create(@Body() body: any) {
-    return this.service.create(body);
-  }
+  @Column()
+  userId: string;
 
-  @Get()
-  findAll() {
-    return this.service.findAll();
-  }
+  @Column('float')
+  totalAmount: number;
+
+  @Column({ default: 'PENDING' })
+  status: string;
+
+  @OneToMany(() => OrderItem, item => item.order, { cascade: true })
+  items: OrderItem[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

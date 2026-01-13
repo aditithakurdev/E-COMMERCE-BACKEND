@@ -1,18 +1,29 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
+import { Controller, Post, Get, Param, Body, Headers, UseGuards } from '@nestjs/common';
+import { OrdersService } from './orders.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CreateOrderDto } from './dto/order.dto';
 
-@Controller('auth')
-export class AuthController {
-  constructor(private authService: AuthService) {}
+@Controller('orders')
+export class OrdersController {
+  constructor(private readonly ordersService: OrdersService) {}
 
-  @Post('register')
-  register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto);
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async create(@Headers('user-id') userId: string, @Body() dto: CreateOrderDto) {
+    return this.ordersService.createOrder(userId, dto);
   }
 
-  @Post('login')
-  login(@Body() body: any) {
-    return this.authService.login(body.email, body.password);
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getOrders(@Headers('user-id') userId: string, @Headers('role') role: string) {
+    const isAdmin = role === 'ADMIN';
+    return this.ordersService.getOrders(userId, isAdmin);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async getOrderById(@Param('id') id: string, @Headers('user-id') userId: string, @Headers('role') role: string) {
+    const isAdmin = role === 'ADMIN';
+    return this.ordersService.getOrderById(id, userId, isAdmin);
   }
 }
